@@ -1,0 +1,128 @@
+\documentclass{article}
+\usepackage{graphicx}
+\usepackage[T1]{fontenc}
+\usepackage[polish]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{listings}
+
+\title{System do monitorowania poziomu glukozy we krwi}
+\author{inż. Mateusz Woźniak}
+\date{Grudzień 2025}
+
+\begin{document}
+
+    \maketitle
+
+
+    \section{Wprowadzenie}
+
+    Celem niniejszego projektu jest opracowanie urządzenia IoT do monitorowania poziomu glukozy we krwi.
+    Założenia systemu:
+    \begin{itemize}
+        \item Centralnym komponentem urządzenia jest Arduino UNO
+        \item Czujnikiem, który generuje sygnał o poziomie glukozy we krwi jest potencjometr (w rzeczywistości jest to prawdziwy czujnik)
+        \item Urządzenie posiada wyświetlacz LCD do pokazywania bieżących i historycznych odczytów
+        \item Pomiary są archiwizowane na karcie SD w pliku CSV.
+        \item Buzer informuje o krytycznym poziomie glukozy we krwi.
+        \item Przycisk powoduje przełączanie się między trybami wyświetlania w LCD (bieżące/archiwalne).
+    \end{itemize}
+
+
+    \section{Realizacja projektu}
+
+    \subsection{Schemat połączenia obwodu}
+    Używając symulatora Wokwi utworzono schemat połączeń komponentów takich jak Arduino UNO, Buzzer, czytnik kard SD, wyświetlacz, potencjometr i zegar RTC.
+
+    \begin{figure}
+        \centering
+        \includegraphics[width=0.9\textwidth]{circuit}\label{fig:schemat}
+        \caption{Schemat połączeń układu}
+    \end{figure}
+
+    Schemat przedstawiono na rys.~\ref{fig:schemat}.
+
+    Poniżej przedstawiono użyte protokoły komunikacji:
+    \begin{itemize}
+        \item Zegar RTC jest podłączony z użyciem protokołu I2C.
+        \item Wyświetlacz LCD jest podłączony z użyciem protokołu I2C.
+        \item Czytnik kart SD jest podłączony z użyciem protokołu SPI.
+        \item Potencjometr jest podłączony za pomocą wejścia anaologowego.
+        \item Buzzer jest podłączony za pomocą wyjścia PWM.
+        \item Przełącznik bistabilny jest podłączony za pomocą wejścia cyfrowego.
+    \end{itemize}
+
+    \subsection{Implementacja oprogramowania}
+
+    Oprogramowanie zostało napisane w środowisku C/Arduino.
+
+    W programie istnieje pętla główna, która jest wykonywana z częstotliwością 100 Hz. Ma ona za zadanie reagować na sygnały wejścia oraz aktualizować wyświetlacz LCD. Pętla ta również sprawdza, czy w danej chwili system powinien pomiar.
+    Interwał pomiaru jest ustawiony na 1 sekundę.
+    Jeżeli warunek czasowy wykonania pomiaru zostanie spełniony, urządzenie wykona odczyt z wejścia analogowego, a następnie wykona przetworzenie odczytu.
+    W ramach przetwarzania urządzenie zapisze odczyt do pliku CSV wraz z aktualną pieczęcią czasu Unix, sprawdzi, czy pomiar powinien spowodować uruchomienie alarmu (buzzer) oraz wyświetli wynik na ekranie LCD.
+
+    W przypadku, gdy użytkownik przełączy przycisk na tryb archiwalny, pętla główna będzie wyświetlać zagregowane pomiary na ekranie LCD (średnie czasowe).
+
+    Logikę działania systemu przedstawiono na rys.~\ref{fig:logic}.
+
+    \begin{figure}
+        \centering
+        \includegraphics[width=0.9\textwidth]{logic}\label{fig:logic}
+        \caption{Diagram blokowy działania systemu}
+    \end{figure}
+
+
+    W listingu~\ref{code} przedstawiono kod źródłowy.
+
+    \lstinputlisting[frame=single, caption={Kod źródłowy}, label=code, numbers=left]{code.c}
+
+
+    \section{Działanie i testy systemu}
+    Urządzenie było przede wszystkim testowane manualnie wraz z rozwojem funkcjonalności projektu.
+
+    Stwierdzono, że urządzenie działa w pełni zgodnie z wyznaczonymi założeniami, a każda funkcjonalność działa bez błędów.
+
+    Na załączonych zrzutach ekranu przedstawiono stan testowania funkcji.
+
+    \begin{figure}
+        \centering
+        \includegraphics[width=0.9\textwidth]{demo1}\label{fig:demo1}
+        \caption{Podstawowy tryb wyświetlania wraz z paskiem informacyjnym}
+    \end{figure}
+
+    \begin{figure}
+        \centering
+        \includegraphics[width=0.9\textwidth]{demo2}\label{fig:demo2}
+        \caption{Urządzenie w stanie ostrzegawczym - buzzer "pika"}
+    \end{figure}
+
+    \begin{figure}
+        \centering
+        \includegraphics[width=0.9\textwidth]{demo3}\label{fig:demo3}
+        \caption{Urządzenie w stanie krytycznym - buzzer wydaje dźwięk ciągły}
+    \end{figure}
+
+    \begin{figure}
+        \centering
+        \includegraphics[width=0.9\textwidth]{demo4}\label{fig:demo4}
+        \caption{Urządzenie w trybie archiwalnym - LCD pokazuje średnie czasowe}
+    \end{figure}
+
+
+    \section{Wnioski}
+    Opracowanie systemu do monitorowania poziomu glukozy we krwi stanowiło dobrą okazję do nauczenia się budowania kompletnych urządzeń wbudowanych.
+    W szczególności trudne było dobre zaprojektowanie pętli, tak by odczyt był wykonywany z częstotliwości 1Hz, a jednocześnie wyświetlacz LCD był odświeżany z częstotliwością 100Hz - ten kluczowy element oprogramowania powinien zostać zaplanowany na samym początku implementacji kodu, a nie w trakcie.
+    Pomimo małych przeszkód, projekt został wykonany w pełni, zgodnie z założeniami początkowymi.
+
+
+    \section{Możliwe ścieżki rozwoju projektu}
+    W trakcie budowy projektu pojawiły się pomysły potencjalnego rozszerzenia projektu o:
+    \begin{itemize}
+        \item Moduł Bluetooth HC-06 - umożliwiałby on strumieniowanie odczytów do innych komponentów np. smartfon
+        \item Moduł GSM - umożliwiałby on strumieniowanie odczytów do sieci internetu komórkowego
+    \end{itemize}
+
+    Opisane powyżej ścieżki rozwoju mogłyby pozwolić na sprawne przekazywanie informacji lekarzowi w czasie rzeczywistym, co pozwoliłoby na jeszcze lepsze efekty leczenia chorób.
+
+
+\end{document}
+
