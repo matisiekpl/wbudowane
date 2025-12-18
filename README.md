@@ -99,13 +99,9 @@ Zrzuty ekranu z Wokwi oraz opis testów znajdują się w dokumentacji PDF.
 ## Jak uruchomić projekt
 
 1. Otwórz link do projektu w **Wokwi** (publiczny).
-2. Upewnij się, że:
-    - podłączony jest potencjometr do A0,
-    - LCD działa na adresie I2C `0x27`,
-    - buzzer i przycisk są poprawnie podłączone.
-3. Uruchom symulację.
-4. Zmieniaj wartość potencjometru, aby testować różne stany systemu.
-5. Użyj przycisku, aby przełączać tryby wyświetlania.
+2. Uruchom symulację.
+3. Zmieniaj wartość potencjometru, aby testować różne stany systemu.
+4. Użyj przycisku, aby przełączać tryby wyświetlania.
 
 ---
 
