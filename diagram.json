@@ -1,0 +1,50 @@
+{
+  "version": 1,
+  "author": "Anonymous maker",
+  "editor": "wokwi",
+  "parts": [
+    { "type": "wokwi-arduino-uno", "id": "uno", "top": 0.6, "left": -0.6, "attrs": {} },
+    { "type": "wokwi-potentiometer", "id": "pot1", "top": 296.3, "left": 105.4, "attrs": {} },
+    {
+      "type": "wokwi-lcd2004",
+      "id": "lcd1",
+      "top": 25.6,
+      "left": 351.2,
+      "attrs": { "pins": "i2c" }
+    },
+    {
+      "type": "wokwi-buzzer",
+      "id": "bz1",
+      "top": -189.6,
+      "left": 203.4,
+      "attrs": { "volume": "0.1" }
+    },
+    { "type": "wokwi-ds1307", "id": "rtc1", "top": -111, "left": -28.7, "attrs": {} },
+    { "type": "wokwi-microsd-card", "id": "sd1", "top": 77.03, "left": -115.13, "attrs": {} },
+    { "type": "wokwi-slide-switch", "id": "sw1", "top": -82, "left": 291.1, "attrs": {} }
+  ],
+  "connections": [
+    [ "pot1:VCC", "uno:5V", "red", [ "v0" ] ],
+    [ "pot1:GND", "uno:GND.2", "black", [ "v0" ] ],
+    [ "pot1:SIG", "uno:A0", "green", [ "v0" ] ],
+    [ "lcd1:GND", "uno:GND.2", "black", [ "h0" ] ],
+    [ "lcd1:VCC", "uno:5V", "red", [ "h0" ] ],
+    [ "uno:A5.2", "lcd1:SCL", "green", [ "v0" ] ],
+    [ "lcd1:SDA", "uno:A4.2", "green", [ "h0" ] ],
+    [ "uno:GND.2", "bz1:1", "black", [ "v0" ] ],
+    [ "uno:9", "bz1:2", "green", [ "v0" ] ],
+    [ "rtc1:GND", "uno:GND.2", "black", [ "h0" ] ],
+    [ "rtc1:5V", "uno:5V", "red", [ "h0" ] ],
+    [ "rtc1:SDA", "uno:A4.2", "green", [ "h0" ] ],
+    [ "rtc1:SCL", "uno:A5.2", "green", [ "h105.6", "v76.6" ] ],
+    [ "sd1:GND", "uno:GND.2", "black", [ "h0" ] ],
+    [ "sd1:VCC", "uno:5V", "red", [ "h0" ] ],
+    [ "sd1:CS", "uno:10", "green", [ "h0" ] ],
+    [ "sd1:DI", "uno:11", "green", [ "h0" ] ],
+    [ "sd1:SCK", "uno:13", "green", [ "h0" ] ],
+    [ "sd1:DO", "uno:12", "green", [ "h0" ] ],
+    [ "sw1:2", "uno:GND.2", "green", [ "v0" ] ],
+    [ "uno:2", "sw1:1", "green", [ "v0" ] ]
+  ],
+  "dependencies": {}
+}
